@@ -9,7 +9,7 @@ export const ko: Record<string, string> = {
   'samples.load': '예제 자료 불러오기', 'samples.loaded': '예제 자료를 추가했어요',
 
   // 소개
-  'land.h1a': '단어부터 그림, 공식까지.', 'land.h1b': '내 공부를 오래 기억하게.',
+  'land.h1a': '단어부터 그림, 공식까지.', 'land.h1b': '공부한 건 오래 남게.',
   'land.lead': '직접 만든 문제를 간격을 두고 복습하는 무료 암기 앱. 계정 없이, 이 기기에서 바로 시작하세요.',
   'land.start': '무료로 시작', 'land.try': '예제 체험', 'land.open': '내 앱 열기', 'land.tryNote': '예제 체험은 예제 자료를 추가한 뒤 복습 일정을 바꾸지 않는 자유 연습으로 열립니다.',
   'land.miniWord': '단어', 'land.miniImage': '이미지 가리기', 'land.miniCode': '코드',

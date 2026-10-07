@@ -63,7 +63,7 @@ export default defineConfig(({ mode }) => {
           cleanupOutdatedCaches: true,
         },
         manifest: {
-          name: 'Recall — 내 공부를 오래 기억하게',
+          name: 'Recall',
           short_name: 'Recall',
           description: '단어부터 그림, 공식까지. 직접 만든 문제를 간격을 두고 복습합니다.',
           lang: 'ko',

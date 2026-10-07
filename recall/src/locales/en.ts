@@ -7,7 +7,7 @@ export const en: Record<string, string> = {
   'card.new': 'New', 'card.dueNow': 'Due', 'card.today': 'Today', 'card.inDays': 'in {n}d',
   'samples.load': 'Load sample decks', 'samples.loaded': 'Sample decks added (content is in Korean)',
 
-  'land.h1a': 'From words to pictures to formulas.', 'land.h1b': 'Remember your own studying for longer.',
+  'land.h1a': 'From words to pictures to formulas.', 'land.h1b': 'Make what you study stick.',
   'land.lead': 'A free memorization app that brings back the questions you made, at spaced intervals. Start on this device, no account needed.',
   'land.start': 'Start free', 'land.try': 'Try the examples', 'land.open': 'Open my app', 'land.tryNote': 'The trial adds sample decks and opens a free practice session that does not change any review schedule.',
   'land.miniWord': 'WORD', 'land.miniImage': 'IMAGE OCCLUSION', 'land.miniCode': 'CODE',
