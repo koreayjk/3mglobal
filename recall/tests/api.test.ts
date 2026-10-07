@@ -147,3 +147,56 @@ describe('Anthropic 어댑터 (가짜 서버)', () => {
     expect(JSON.stringify(j)).not.toContain('sk-ant-test')
   })
 })
+
+describe('Gemini 어댑터 (가짜 서버)', () => {
+  let srv: Server; let port = 0; const seen: { url: string; headers: Record<string, unknown>; body: any }[] = []; let mode = 'ok'
+  const result = { title: 'G', topic: 't', concepts: [], terms: [], processes: [], keyPoints: [], cards: [{ type: 'qa', question: 'q', answer: 'a', hint: '', explanation: '', text: '', pageIndex: 0, sources: [1], needsReview: false }], warnings: [] }
+  beforeEach(async () => {
+    seen.length = 0; mode = 'ok'
+    srv = createServer((rq, rs) => {
+      let b = ''
+      rq.on('data', (c) => (b += c))
+      rq.on('end', () => {
+        const body = JSON.parse(b); seen.push({ url: rq.url!, headers: rq.headers, body })
+        rs.setHeader('content-type', 'application/json')
+        if (mode === 'schema400' && body.generationConfig.responseJsonSchema) { rs.statusCode = 400; return rs.end(JSON.stringify({ error: { message: 'Invalid JSON payload: responseJsonSchema', status: 'INVALID_ARGUMENT' } })) }
+        if (mode === 'badkey') { rs.statusCode = 400; return rs.end(JSON.stringify({ error: { message: 'API key not valid. Please pass a valid API key.' } })) }
+        if (mode === '429') { rs.statusCode = 429; return rs.end('{}') }
+        if (mode === 'max') return rs.end(JSON.stringify({ candidates: [{ finishReason: 'MAX_TOKENS', content: { parts: [{ text: '{' }] } }] }))
+        if (mode === 'blocked') return rs.end(JSON.stringify({ promptFeedback: { blockReason: 'SAFETY' } }))
+        rs.end(JSON.stringify({ candidates: [{ finishReason: 'STOP', content: { parts: [{ text: 'thinking...', thought: true }, { text: JSON.stringify(result) }] } }] }))
+      })
+    })
+    await new Promise<void>((r) => srv.listen(0, '127.0.0.1', r)); port = (srv.address() as any).port
+  })
+  afterEach(() => new Promise<void>((r) => srv.close(() => r())))
+  const env = () => ({ AI_PROVIDER: 'gemini', GEMINI_API_KEY: 'AIza-test-key', AI_BASE_URL: `http://127.0.0.1:${port}/v1beta` })
+
+  it('헤더로 키를 보내고(URL 에 없음) 기본 모델·스키마·이미지 형식을 사용한다', async () => {
+    const r = await handleAnalyze(req({ ...ok, pages: [{ index: 1, text: 'hi', image: { mime: 'image/jpeg', data: 'AAAA' } }] }), env())
+    const j = await r.json()
+    expect(r.status).toBe(200); expect(j.result.title).toBe('G'); expect(j.meta.provider).toBe('gemini')
+    expect(seen[0].url).toBe('/v1beta/models/gemini-2.5-flash:generateContent')
+    expect(seen[0].url).not.toContain('AIza')
+    expect(seen[0].headers['x-goog-api-key']).toBe('AIza-test-key')
+    expect(seen[0].body.generationConfig.responseMimeType).toBe('application/json')
+    expect(seen[0].body.generationConfig.responseJsonSchema.type).toBe('object')
+    expect(JSON.stringify(seen[0].body.contents)).toContain('inlineData')
+    expect(seen[0].body.systemInstruction.parts[0].text).toContain('UNTRUSTED')
+    expect(JSON.stringify(j)).not.toContain('AIza-test-key')
+  })
+  it('스키마 형식이 거절되면 프롬프트에 스키마를 넣어 한 번 재시도한다', async () => {
+    mode = 'schema400'
+    const r = await handleAnalyze(req(ok), env())
+    expect(r.status).toBe(200); expect(seen.length).toBe(2)
+    expect(seen[1].body.generationConfig.responseJsonSchema).toBeUndefined()
+    expect(JSON.stringify(seen[1].body.contents)).toContain('JSON Schema')
+  })
+  it('잘못된 키·한도 초과·잘림·차단을 구분한다', async () => {
+    mode = 'badkey'; expect((await (await handleAnalyze(req(ok), env())).json()).error.code).toBe('provider_auth')
+    mode = '429'; const r429 = await handleAnalyze(req(ok), env()); expect(r429.status).toBe(503); expect((await r429.json()).error.code).toBe('provider_busy')
+    mode = 'max'; expect((await (await handleAnalyze(req(ok), env())).json()).error.code).toBe('output_too_long')
+    mode = 'blocked'; expect((await (await handleAnalyze(req(ok), env())).json()).error.code).toBe('refused')
+  })
+  it('GEMINI_API_KEY 가 없으면 AI 가 꺼진다', () => { expect(loadConfig({ AI_PROVIDER: 'gemini' }).enabled).toBe(false); expect(loadConfig({ AI_PROVIDER: 'gemini', GOOGLE_API_KEY: 'x' }).enabled).toBe(true) })
+})

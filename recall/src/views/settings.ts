@@ -90,7 +90,7 @@ export default async function view({ root }: Ctx) {
         aiBox.append(field(t('set.accessCode'), code, t('set.accessCodeHelp')), h('button', { class: 'btn', type: 'button', onClick: async () => { await saveSettings({ aiAccessCode: code.value.trim() }); toast(t('set.saved')) } }, t('common.save')))
       }
     }
-    aiBox.append(h('p', { class: 'small muted' }, t('set.aiPrivacy')))
+    aiBox.append(h('p', { class: 'small muted' }, t('set.aiPrivacy')), ...(hl?.provider === 'gemini' ? [h('p', { class: 'small muted' }, t('ai.privacyGemini'))] : []))
   })
 
   root.append(h('section', { class: 'card', style: 'margin-top:16px' }, h('h2', null, t('set.about')), h('p', null, t('set.aboutText')), h('p', { class: 'small muted' }, t('set.aboutFuture'))))

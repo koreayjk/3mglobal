@@ -6,7 +6,7 @@ const num = (v: string | undefined, d: number, min = 1, max = 1_000_000) => {
 
 export interface Config {
   enabled: boolean
-  provider: 'anthropic' | 'openai' | 'mock' | ''
+  provider: 'anthropic' | 'openai' | 'gemini' | 'mock' | ''
   model: string
   apiKey: string
   baseUrl: string
@@ -26,9 +26,9 @@ export interface Config {
 
 export function loadConfig(env: Record<string, string | undefined> = process.env): Config {
   const p = (env.AI_PROVIDER || '').trim().toLowerCase()
-  const provider = p === 'anthropic' || p === 'openai' || p === 'mock' ? p : ''
-  const apiKey = provider === 'anthropic' ? env.ANTHROPIC_API_KEY || '' : provider === 'openai' ? env.OPENAI_API_KEY || '' : ''
-  const model = (env.AI_MODEL || '').trim() || (provider === 'anthropic' ? 'claude-haiku-5-5' : '')
+  const provider = p === 'anthropic' || p === 'openai' || p === 'gemini' || p === 'mock' ? p : ''
+  const apiKey = provider === 'anthropic' ? env.ANTHROPIC_API_KEY || '' : provider === 'openai' ? env.OPENAI_API_KEY || '' : provider === 'gemini' ? env.GEMINI_API_KEY || env.GOOGLE_API_KEY || '' : ''
+  const model = (env.AI_MODEL || '').trim() || (provider === 'anthropic' ? 'claude-haiku-5-5' : provider === 'gemini' ? 'gemini-2.5-flash' : '')
   const ready = provider === 'mock' || (provider !== '' && apiKey !== '' && model !== '')
   const effort = ['low', 'medium', 'high'].includes(env.AI_EFFORT || '') ? (env.AI_EFFORT as 'low') : ''
   return {

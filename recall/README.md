@@ -57,15 +57,16 @@ npm run build && npm run preview   # 프로덕션 빌드 확인(PWA/오프라인
 - 키/제공자가 없으면 `/api/health` 가 `aiEnabled:false` 를 돌려주고 **AI 기능만 꺼집니다.** 직접 만들기·복습은 그대로 동작합니다.
 - 제공자·모델은 환경변수로 교체합니다. 새 제공자는 `providers/` 에 어댑터를 추가하면 됩니다.
   - `anthropic`: 공식 `@anthropic-ai/sdk`, 구조화 출력(`output_config.format`). 기본 모델 `claude-haiku-5-5` (바꾸려면 `AI_MODEL`).
+  - `gemini`: Google Gemini API(`generateContent`, 키는 `x-goog-api-key` 헤더). 기본 모델 `gemini-2.5-flash`(`AI_MODEL` 로 변경). **무료 사용 구간(free tier)이 있습니다.** 아래 "Gemini 무료 구간" 참고.
   - `openai`: Chat Completions + JSON 스키마 응답. `AI_BASE_URL` 로 호환 서버 지정 가능. `AI_MODEL` 필수.
   - `mock`: 개발용. **입력과 무관한 고정 예제**이며 UI 에 눈에 띄는 "개발용 예제 결과" 배너가 항상 붙습니다.
 
 ### 환경변수 (`.env.example` 참고, 값은 모두 비어 있음)
 | 변수 | 설명 |
 |---|---|
-| `AI_PROVIDER` | `anthropic` / `openai` / `mock` (비우면 AI 꺼짐) |
+| `AI_PROVIDER` | `anthropic` / `openai` / `gemini` / `mock` (비우면 AI 꺼짐) |
 | `AI_MODEL` | 모델 ID |
-| `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` | 사용하는 쪽만. **서버에만** |
+| `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY` | 사용하는 쪽만. **서버에만** (Gemini 는 `GOOGLE_API_KEY` 도 인식) |
 | `AI_BASE_URL`, `AI_EFFORT` | 선택 |
 | `AI_ENABLED=false` | 긴급 차단 스위치 |
 | `AI_ACCESS_CODE` | 설정하면 앱 설정 화면에서 같은 코드를 입력한 사용자만 AI 사용 (이 기기에만 저장, 백업 제외) |
@@ -74,6 +75,13 @@ npm run build && npm run preview   # 프로덕션 빌드 확인(PWA/오프라인
 | `AI_RATE_LIMIT_PER_HOUR` `AI_DAILY_REQUEST_CAP` | IP당 시간당(기본 20), 하루 총 요청(기본 300) |
 | `VITE_AI_API_BASE` | (비밀 아님) 정적 호스팅에서 별도 AI 서버 주소 |
 | `VITE_BASE` | (비밀 아님) 하위 경로 배포 시 base |
+
+### Gemini 무료 구간 (2026-10 공식 문서 기준, 바뀔 수 있음)
+- Google AI Studio 에서 API 키를 만들고 `AI_PROVIDER=gemini`, `GEMINI_API_KEY=…` 를 서버 환경변수에 넣으면 됩니다. 이미지 입력을 지원하는 무료 모델(예: `gemini-2.5-flash`, `gemini-2.5-flash-lite`)을 `AI_MODEL` 로 고를 수 있습니다.
+- **무료 구간에서는 입력 내용이 Google 제품 개선에 사용될 수 있다**고 문서에 명시돼 있습니다(유료 구간은 아님). 앱은 이 경고를 전송 전 안내에 표시하지만, 민감한 자료는 보내지 마세요.
+- 한도는 **프로젝트 단위**이고 모델·계정 상태에 따라 달라지며 자주 바뀝니다. 정확한 값은 AI Studio 의 rate limit 화면에서 확인하세요. 한도를 넘으면 앱에 "AI 서비스가 혼잡해요" 오류가 보입니다. 공개 사이트에서는 모든 사용자가 한 프로젝트의 한도를 나눠 쓰므로 `AI_ACCESS_CODE` 를 권장합니다.
+- 생각(thinking) 토큰이 출력 한도에 포함되는 모델에서 "결과가 너무 길어요"가 나오면 `AI_MAX_OUTPUT_TOKENS` 를 늘리세요(예: 12000).
+- 구조화 출력 필드(`responseJsonSchema`)를 모델이 거절하면 스키마를 프롬프트로 옮겨 한 번 재시도합니다. 실제 Gemini 호출은 이 개발 환경에 키가 없어 가짜 서버로만 테스트했습니다.
 
 ### 비용·개인정보·남용 방지 — 정확한 한계
 - 분석 버튼을 누른 자료만 전송됩니다. 전송 전에 페이지/글자/이미지 수와 "외부 AI 서비스로 전송" 안내를 보여주고, 글자 추출은 별도 동의 대화상자를 거칩니다. 이미지는 긴 변 1280px 로 줄여 보내고, "이미지도 함께 전송"은 기본 꺼짐입니다.

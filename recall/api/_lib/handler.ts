@@ -3,6 +3,7 @@ import { checkRate } from './limits.js'
 import { extractSystem, organizeSystem } from './prompt.js'
 import { anthropicProvider } from './providers/anthropic.js'
 import { mockProvider } from './providers/mock.js'
+import { geminiProvider } from './providers/gemini.js'
 import { openaiProvider } from './providers/openai.js'
 import { ProviderError, type Provider } from './providers/types.js'
 import {
@@ -10,7 +11,7 @@ import {
   type AnalyzeRequest, type AnalyzeResponse, type HealthInfo, type PageInput,
 } from './types.js'
 
-const PROVIDERS: Record<string, Provider> = { anthropic: anthropicProvider, openai: openaiProvider, mock: mockProvider }
+const PROVIDERS: Record<string, Provider> = { anthropic: anthropicProvider, openai: openaiProvider, gemini: geminiProvider, mock: mockProvider }
 
 // ───── CORS / 출처 ─────
 function corsHeaders(req: Request, cfg: Config): Record<string, string> {

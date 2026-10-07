@@ -263,7 +263,7 @@ export default async function view({ root, query }: Ctx) {
       field(t('ai.focus'), focus), h('label', { class: 'check' }, inc, t('ai.includeImages')), h('div', { class: 'field-hint', style: 'margin-top:-8px' }, t('ai.includeImagesHelp')),
       !opts.includeImages && emptyPages.length ? h('div', { class: 'notice warn' }, t('ai.emptySkipped', { n: emptyPages.length })) : null,
       h('div', { class: 'notice' }, h('strong', null, t('ai.privacyTitle')), h('ul', { style: 'margin:6px 0 0;padding-left:1.2em' },
-        h('li', null, t('ai.privacy1', { provider: health?.provider || '—' })), h('li', null, t('ai.privacy2', { pages: inPages.length, chars, imgs })), h('li', null, t('ai.privacy3')),
+        h('li', null, t('ai.privacy1', { provider: health?.provider || '—' })), h('li', null, t('ai.privacy2', { pages: inPages.length, chars, imgs })), h('li', null, t('ai.privacy3')), health?.provider === 'gemini' ? h('li', null, t('ai.privacyGemini')) : null,
         h('li', null, t('ai.privacy4', { n: health?.limits.rateLimitPerHour ?? 0 })))),
       problems.length ? h('div', { class: 'notice bad', role: 'alert' }, h('ul', { style: 'margin:0;padding-left:1.2em' }, problems.map((p) => h('li', null, p)))) : null,
       sendError ? errBox() : null,
