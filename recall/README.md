@@ -57,7 +57,7 @@ npm run build && npm run preview   # 프로덕션 빌드 확인(PWA/오프라인
 - 키/제공자가 없으면 `/api/health` 가 `aiEnabled:false` 를 돌려주고 **AI 기능만 꺼집니다.** 직접 만들기·복습은 그대로 동작합니다.
 - 제공자·모델은 환경변수로 교체합니다. 새 제공자는 `providers/` 에 어댑터를 추가하면 됩니다.
   - `anthropic`: 공식 `@anthropic-ai/sdk`, 구조화 출력(`output_config.format`). 기본 모델 `claude-haiku-5-5` (바꾸려면 `AI_MODEL`).
-  - `gemini`: Google Gemini API(`generateContent`, 키는 `x-goog-api-key` 헤더). 기본 모델 `gemini-2.5-flash`(`AI_MODEL` 로 변경). **무료 사용 구간(free tier)이 있습니다.** 아래 "Gemini 무료 구간" 참고.
+  - `gemini`: Google Gemini API(`generateContent`, 키는 `x-goog-api-key` 헤더). 기본 모델 `gemini-3.8-flash`(`AI_MODEL` 로 변경. Google 이 모델을 신규 사용자에게 종료하면 404 가 나므로 그때는 `AI_MODEL` 만 바꾸세요). **무료 사용 구간(free tier)이 있습니다.** 아래 "Gemini 무료 구간" 참고.
   - `openai`: Chat Completions + JSON 스키마 응답. `AI_BASE_URL` 로 호환 서버 지정 가능. `AI_MODEL` 필수.
   - `mock`: 개발용. **입력과 무관한 고정 예제**이며 UI 에 눈에 띄는 "개발용 예제 결과" 배너가 항상 붙습니다.
 
@@ -77,7 +77,7 @@ npm run build && npm run preview   # 프로덕션 빌드 확인(PWA/오프라인
 | `VITE_BASE` | (비밀 아님) 하위 경로 배포 시 base |
 
 ### Gemini 무료 구간 (2026-10 공식 문서 기준, 바뀔 수 있음)
-- Google AI Studio 에서 API 키를 만들고 `AI_PROVIDER=gemini`, `GEMINI_API_KEY=…` 를 서버 환경변수에 넣으면 됩니다. 이미지 입력을 지원하는 무료 모델(예: `gemini-2.5-flash`, `gemini-2.5-flash-lite`)을 `AI_MODEL` 로 고를 수 있습니다.
+- Google AI Studio 에서 API 키를 만들고 `AI_PROVIDER=gemini`, `GEMINI_API_KEY=…` 를 서버 환경변수에 넣으면 됩니다. 이미지 입력을 지원하는 무료 모델(2026-10 문서 기준 예: `gemini-3.8-flash`, `gemini-3.5-flash-lite`)을 `AI_MODEL` 로 고를 수 있습니다.
 - **무료 구간에서는 입력 내용이 Google 제품 개선에 사용될 수 있다**고 문서에 명시돼 있습니다(유료 구간은 아님). 앱은 이 경고를 전송 전 안내에 표시하지만, 민감한 자료는 보내지 마세요.
 - 한도는 **프로젝트 단위**이고 모델·계정 상태에 따라 달라지며 자주 바뀝니다. 정확한 값은 AI Studio 의 rate limit 화면에서 확인하세요. 한도를 넘으면 앱에 "AI 서비스가 혼잡해요" 오류가 보입니다. 공개 사이트에서는 모든 사용자가 한 프로젝트의 한도를 나눠 쓰므로 `AI_ACCESS_CODE` 를 권장합니다.
 - 생각(thinking) 토큰이 출력 한도에 포함되는 모델에서 "결과가 너무 길어요"가 나오면 `AI_MAX_OUTPUT_TOKENS` 를 늘리세요(예: 12000).

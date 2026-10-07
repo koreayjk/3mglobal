@@ -176,7 +176,7 @@ describe('Gemini 어댑터 (가짜 서버)', () => {
     const r = await handleAnalyze(req({ ...ok, pages: [{ index: 1, text: 'hi', image: { mime: 'image/jpeg', data: 'AAAA' } }] }), env())
     const j = await r.json()
     expect(r.status).toBe(200); expect(j.result.title).toBe('G'); expect(j.meta.provider).toBe('gemini')
-    expect(seen[0].url).toBe('/v1beta/models/gemini-2.5-flash:generateContent')
+    expect(seen[0].url).toBe('/v1beta/models/gemini-3.8-flash:generateContent')
     expect(seen[0].url).not.toContain('AIza')
     expect(seen[0].headers['x-goog-api-key']).toBe('AIza-test-key')
     expect(seen[0].body.generationConfig.responseMimeType).toBe('application/json')

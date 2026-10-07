@@ -28,7 +28,7 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
   const p = (env.AI_PROVIDER || '').trim().toLowerCase()
   const provider = p === 'anthropic' || p === 'openai' || p === 'gemini' || p === 'mock' ? p : ''
   const apiKey = provider === 'anthropic' ? env.ANTHROPIC_API_KEY || '' : provider === 'openai' ? env.OPENAI_API_KEY || '' : provider === 'gemini' ? env.GEMINI_API_KEY || env.GOOGLE_API_KEY || '' : ''
-  const model = (env.AI_MODEL || '').trim() || (provider === 'anthropic' ? 'claude-haiku-5-5' : provider === 'gemini' ? 'gemini-2.5-flash' : '')
+  const model = (env.AI_MODEL || '').trim() || (provider === 'anthropic' ? 'claude-haiku-5-5' : provider === 'gemini' ? 'gemini-3.8-flash' : '')
   const ready = provider === 'mock' || (provider !== '' && apiKey !== '' && model !== '')
   const effort = ['low', 'medium', 'high'].includes(env.AI_EFFORT || '') ? (env.AI_EFFORT as 'low') : ''
   return {
