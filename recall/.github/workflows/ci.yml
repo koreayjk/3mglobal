@@ -1,0 +1,23 @@
+# 이 폴더(recall/)를 별도 저장소의 루트로 옮겼을 때 사용하는 CI 입니다.
+# (모노레포 안에서는 GitHub 이 이 경로를 읽지 않으며, 루트의 .github/workflows/recall-ci.yml 이 대신 동작합니다.)
+name: Recall CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run check:i18n
+      - run: npm test
+      - run: npm run build
+      - run: npm run check:secrets
