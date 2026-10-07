@@ -8,7 +8,9 @@ import { clear, h, svg } from '../util'
 
 // 원리 설명용 예시 모델 (실측 데이터나 개인 기억률이 아님): R = exp(-t/S), 복습 시 R=1 로 돌아가고 S 가 커진다고 가정
 const S0 = 2, GROWTH = 2.4, REVIEW_DAYS = [1, 3, 7, 14, 24]
-const W = 640, H = 300, L = 48, R = 16, T = 16, B = 44, MAXD = 30
+// 그래프는 실제 표시 폭(px)에 맞춰 그린다. 고정 도면을 축소하면 글자도 같이 작아지기 때문이다.
+let W = 640, H = 300
+const L = 52, R = 16, T = 18, B = 46, MAXD = 30
 
 function curvePath(reviews: number[], withReviews: boolean): string {
   const pts: string[] = []
@@ -85,12 +87,13 @@ function miniMask(): HTMLElement {
 
 function curveSection(): HTMLElement {
   let n = 0
-  const svgEl = svg('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-labelledby': 'curve-title curve-desc' })
+  const svgEl = svg('svg', { role: 'img', 'aria-labelledby': 'curve-title curve-desc' })
   const live = h('p', { class: 'small', 'aria-live': 'polite', style: 'min-height:2.8em' })
   const btn = h('button', { class: 'btn primary', type: 'button' }, '')
   const reset = h('button', { class: 'btn', type: 'button' }, t('land.curve.reset'))
   const draw = () => {
     clear(svgEl)
+    svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`)
     const rv = REVIEW_DAYS.slice(0, n)
     svgEl.append(svg('title', { id: 'curve-title' }, t('land.curve.title')), svg('desc', { id: 'curve-desc' }, t('land.curve.desc')))
     for (let i = 0; i <= 4; i++) svgEl.append(svg('line', { class: 'grid-l', x1: L, x2: W - R, y1: T + (i * (H - T - B)) / 4, y2: T + (i * (H - T - B)) / 4 }))
@@ -110,6 +113,8 @@ function curveSection(): HTMLElement {
     ;(btn as HTMLButtonElement).disabled = n >= REVIEW_DAYS.length
     live.textContent = n === 0 ? t('land.curve.live0') : t('land.curve.liveN', { n })
   }
+  const fit = (w: number) => { W = Math.max(260, Math.round(w)); H = Math.max(220, Math.min(320, Math.round(W * 0.55))); draw() }
+  new ResizeObserver((es) => { const w = es[0].contentRect.width; if (w > 0 && Math.abs(w - W) >= 4) fit(w) }).observe(svgEl as unknown as Element)
   btn.addEventListener('click', () => { if (n < REVIEW_DAYS.length) { n++; draw() } })
   reset.addEventListener('click', () => { n = 0; draw() })
   draw()
