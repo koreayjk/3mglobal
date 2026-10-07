@@ -1,0 +1,16 @@
+node_modules
+dist
+.vercel
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+# 사용자 업로드·백업 파일이 실수로 커밋되지 않도록
+uploads/
+recall-backup*.json
+*.local
+.DS_Store
+coverage
+test-results

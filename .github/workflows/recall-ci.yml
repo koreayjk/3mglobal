@@ -1,0 +1,32 @@
+name: Recall CI
+on:
+  push:
+    paths: ['recall/**', '.github/workflows/recall-ci.yml']
+  pull_request:
+    paths: ['recall/**', '.github/workflows/recall-ci.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: recall
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: recall/package-lock.json
+      - run: npm ci
+      - name: TypeScript check
+        run: npm run typecheck
+      - name: i18n key check
+        run: npm run check:i18n
+      - name: Unit tests
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: No secrets in the build output
+        run: npm run check:secrets

@@ -1,0 +1,30 @@
+{
+  "name": "recall-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "check:i18n": "tsx scripts/check-i18n.ts",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "verify": "npm run typecheck && npm run check:i18n && npm test && npm run build && npm run check:secrets"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.132.0",
+    "pdfjs-dist": "^6.4.299",
+    "ts-fsrs": "^5.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.3",
+    "vite-plugin-pwa": "^2.0.0",
+    "vitest": "^5.0.3"
+  },
+  "description": "Recall - 로그인 없이 쓰는 무료 간격 반복 암기 앱 (MVP)"
+}
