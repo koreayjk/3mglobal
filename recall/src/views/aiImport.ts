@@ -36,7 +36,7 @@ export default async function view({ root, query }: Ctx) {
   const jobs: Job[] = []
   let busy = false
   let ctl: AbortController | null = null
-  let sendError: { code: string; message: string; retryable: boolean } | null = null
+  let sendError: { code: string; message: string; retryable: boolean; detail?: string } | null = null
   let result: OrganizeResult | null = null
   let isMock = false
   let editCards: EditCard[] = []
@@ -210,7 +210,7 @@ export default async function view({ root, query }: Ctx) {
 
   function errBox() {
     const e = sendError!
-    return h('div', { class: 'notice bad', role: 'alert' }, h('strong', null, errText(e.code, e.message)), h('div', { class: 'small' }, e.retryable ? t('ai.retryHint') : t('ai.noRetryHint')))
+    return h('div', { class: 'notice bad', role: 'alert' }, h('strong', null, errText(e.code, e.message)), h('div', { class: 'small' }, e.retryable ? t('ai.retryHint') : t('ai.noRetryHint')), e.detail ? h('div', { class: 'small', style: 'margin-top:6px;overflow-wrap:anywhere' }, `${t('ai.detail')}: ${e.detail}`) : null)
   }
 
   async function runExtract() {

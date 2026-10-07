@@ -30,8 +30,8 @@ export async function analyze(req: AnalyzeRequest, o: { signal?: AbortSignal; ac
   try { body = await res.json() } catch { return { ok: false, error: { code: 'bad_response', message: 'Unreadable response', retryable: true } } }
   const b = body as AnalyzeResponse
   if (!res.ok || !b || (b as { ok?: boolean }).ok !== true) {
-    const e = (b as { error?: { code?: string; message?: string; retryable?: boolean } })?.error
-    return { ok: false, error: { code: e?.code || `http_${res.status}`, message: e?.message || 'Request failed', retryable: e?.retryable ?? res.status >= 500 } }
+    const e = (b as { error?: { code?: string; message?: string; retryable?: boolean; detail?: string } })?.error
+    return { ok: false, error: { code: e?.code || `http_${res.status}`, message: e?.message || 'Request failed', retryable: e?.retryable ?? res.status >= 500, ...(e?.detail ? { detail: String(e.detail).slice(0, 300) } : {}) } }
   }
   // 서버 응답도 신뢰하지 않고 다시 정제한다
   if (b.ok && b.task === 'extract') return { ...b, result: sanitizeExtract(b.result) }

@@ -147,7 +147,7 @@ export const ko: Record<string, string> = {
   'ai.focus': '중점적으로 공부할 부분 (선택)', 'ai.focusPh': '예: 용어 정의 위주로', 'ai.includeImages': '이미지도 함께 전송 (이미지 식별 카드 제안용)', 'ai.includeImagesHelp': '켜면 선택된 이미지가 외부로 전송됩니다. 텍스트가 없는 페이지도 이미지로 분석됩니다. 끄면 확인한 텍스트만 전송합니다.',
   'ai.emptySkipped': '텍스트가 비어 있는 페이지 {n}개는 전송되지 않아요.', 'ai.privacyTitle': '전송 전 확인', 'ai.privacy1': '분석을 누르면 아래 자료가 외부 AI 서비스({provider})로 전송됩니다. 누르기 전에는 아무것도 전송되지 않습니다.',
   'ai.privacy2': '이번 전송: {pages}페이지, 텍스트 {chars}자, 이미지 {imgs}장', 'ai.privacy3': '서버는 원본과 추출 텍스트를 로그에 남기지 않도록 만들어졌습니다. 개인정보·민감한 자료는 보내지 마세요.', 'ai.privacy4': '무제한 무료가 아닙니다. 서버 사용량 제한이 있어요 (IP당 시간당 약 {n}회).',
-  'ai.privacyGemini': 'Gemini 무료 사용 구간(free tier)에서는 입력 내용이 Google 제품 개선에 사용될 수 있습니다. 민감하거나 개인적인 자료는 보내지 마세요.', 'ai.p.none': '전송할 페이지가 없어요.', 'ai.p.pages': '한 번에 최대 {n}페이지까지 가능해요. 페이지를 줄이세요.', 'ai.p.images': '이미지는 최대 {n}장까지 전송할 수 있어요.', 'ai.p.chars': '텍스트가 너무 길어요 (최대 {n}자).',
+  'ai.privacyGemini': 'Gemini 무료 사용 구간(free tier)에서는 입력 내용이 Google 제품 개선에 사용될 수 있습니다. 민감하거나 개인적인 자료는 보내지 마세요.', 'ai.detail': '제공자 응답', 'ai.p.none': '전송할 페이지가 없어요.', 'ai.p.pages': '한 번에 최대 {n}페이지까지 가능해요. 페이지를 줄이세요.', 'ai.p.images': '이미지는 최대 {n}장까지 전송할 수 있어요.', 'ai.p.chars': '텍스트가 너무 길어요 (최대 {n}자).',
   'ai.analyze': 'AI 분석 보내기', 'ai.retryHint': '잠시 후 다시 시도할 수 있어요.', 'ai.noRetryHint': '자료나 설정을 바꾼 뒤 다시 시도하세요.',
   'ai.err.generic': '분석에 실패했어요.', 'ai.err.network': '네트워크에 연결할 수 없어요. 연결을 확인하고 다시 시도하세요.', 'ai.err.ai_disabled': 'AI 서버가 설정되지 않았어요.', 'ai.err.access_code': '접근 코드가 필요하거나 올바르지 않아요. 설정에서 입력하세요.',
   'ai.err.rate_limited': '요청이 너무 많아요. 잠시 후 다시 시도하세요.', 'ai.err.daily_cap': '오늘 AI 사용량 한도에 도달했어요. 내일 다시 시도하세요.', 'ai.err.too_large': '요청이 너무 커요. 페이지나 이미지를 줄이세요.', 'ai.err.bad_request': '요청 형식이 올바르지 않아요. 페이지 수·글자 수를 확인하세요.',

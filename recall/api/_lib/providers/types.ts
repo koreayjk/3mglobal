@@ -9,6 +9,6 @@ export interface ProviderCall {
   signal?: AbortSignal
 }
 export class ProviderError extends Error {
-  constructor(public code: string, message: string, public status = 502, public retryable = true) { super(message) }
+  constructor(public code: string, message: string, public status = 502, public retryable = true, public detail = '') { super(message) }
 }
 export type Provider = (cfg: Config, call: ProviderCall) => Promise<unknown>

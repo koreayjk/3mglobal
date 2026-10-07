@@ -57,7 +57,7 @@ export interface AnalyzeMeta { provider: string; mock: boolean }
 export type AnalyzeResponse =
   | { ok: true; task: 'extract'; result: ExtractResult; meta: AnalyzeMeta }
   | { ok: true; task: 'organize'; result: OrganizeResult; meta: AnalyzeMeta }
-  | { ok: false; error: { code: string; message: string; retryable: boolean } }
+  | { ok: false; error: { code: string; message: string; retryable: boolean; detail?: string } }
 
 export interface HealthInfo {
   aiEnabled: boolean

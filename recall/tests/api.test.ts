@@ -200,3 +200,15 @@ describe('Gemini 어댑터 (가짜 서버)', () => {
   })
   it('GEMINI_API_KEY 가 없으면 AI 가 꺼진다', () => { expect(loadConfig({ AI_PROVIDER: 'gemini' }).enabled).toBe(false); expect(loadConfig({ AI_PROVIDER: 'gemini', GOOGLE_API_KEY: 'x' }).enabled).toBe(true) })
 })
+
+describe('제공자 거절 사유(detail)', () => {
+  it('Gemini 가 모델을 못 찾으면 사유를 돌려주되 키는 가린다', async () => {
+    const s = createServer((_rq, rs) => { rs.statusCode = 404; rs.setHeader('content-type', 'application/json'); rs.end(JSON.stringify({ error: { status: 'NOT_FOUND', message: 'models/bad is not found for key AIza-secret-9' } })) })
+    await new Promise<void>((r) => s.listen(0, '127.0.0.1', r))
+    const port = (s.address() as any).port
+    const r = await handleAnalyze(req(ok), { AI_PROVIDER: 'gemini', GEMINI_API_KEY: 'AIza-secret-9', AI_MODEL: 'bad', AI_BASE_URL: `http://127.0.0.1:${port}/v1beta` })
+    const j = await r.json(); await new Promise<void>((res) => s.close(() => res()))
+    expect(j.error.code).toBe('provider_rejected'); expect(j.error.detail).toContain('NOT_FOUND'); expect(j.error.detail).toContain('model: bad')
+    expect(JSON.stringify(j)).not.toContain('AIza-secret-9')
+  })
+})

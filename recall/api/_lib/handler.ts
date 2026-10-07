@@ -33,8 +33,8 @@ function originAllowed(req: Request, cfg: Config): boolean {
 }
 const json = (body: unknown, status: number, extra: Record<string, string> = {}) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json; charset=utf-8', ...extra } })
-const fail = (status: number, code: string, message: string, retryable: boolean, extra: Record<string, string> = {}) =>
-  json({ ok: false, error: { code, message, retryable } } satisfies AnalyzeResponse, status, extra)
+const fail = (status: number, code: string, message: string, retryable: boolean, extra: Record<string, string> = {}, detail = '') =>
+  json({ ok: false, error: { code, message, retryable, ...(detail ? { detail } : {}) } } satisfies AnalyzeResponse, status, extra)
 
 function clientIp(req: Request): string {
   const xf = req.headers.get('x-forwarded-for')
@@ -152,7 +152,9 @@ export async function handleAnalyze(req: Request, env?: Record<string, string | 
   } catch (e) {
     const pe = e instanceof ProviderError ? e : new ProviderError('internal', 'Unexpected server error.', 500)
     console.error('analyze failed:', pe.code) // 코드만 기록
-    return fail(pe.status === 499 ? 499 : pe.status, pe.code, pe.message, pe.retryable, cors)
+    // 제공자가 알려 준 거절 사유만 (키·요청 내용은 제외) 짧게 돌려준다
+    const detail = pe.detail ? pe.detail.split(cfg.apiKey).join('[key]').replace(/\s+/g, ' ').slice(0, 300) : ''
+    return fail(pe.status === 499 ? 499 : pe.status, pe.code, pe.message, pe.retryable, cors, detail)
   }
 }
 

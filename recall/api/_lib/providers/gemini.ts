@@ -6,6 +6,11 @@ import { ProviderError, type Provider } from './types.js'
 const DEFAULT_BASE = 'https://generativelanguage.googleapis.com/v1beta'
 const BLOCKED = new Set(['SAFETY', 'PROHIBITED_CONTENT', 'BLOCKLIST', 'IMAGE_SAFETY', 'SPII', 'RECITATION', 'OTHER'])
 
+async function errDetail(res: Response, model: string): Promise<string> {
+  const j = (await res.clone().json().catch(() => null)) as { error?: { status?: string; message?: string } } | null
+  return `HTTP ${res.status} ${j?.error?.status ?? ''} ${j?.error?.message ?? ''} (model: ${model})`.trim()
+}
+
 export const geminiProvider: Provider = async (cfg, call) => {
   const base = (cfg.baseUrl || DEFAULT_BASE).replace(/\/+$/, '')
   const model = cfg.model.replace(/^models\//, '')
@@ -47,11 +52,11 @@ export const geminiProvider: Provider = async (cfg, call) => {
   if (res.status === 429) throw new ProviderError('provider_busy', 'The AI provider is busy or the free-tier quota is used up. Try again later.', 503)
   if (res.status === 401 || res.status === 403) throw new ProviderError('provider_auth', 'AI provider credentials are not valid.', 502, false)
   if (res.status === 400) {
-    const msg = JSON.stringify(await res.json().catch(() => ({}))).toLowerCase()
+    const msg = JSON.stringify(await res.clone().json().catch(() => ({}))).toLowerCase()
     if (msg.includes('api key') || msg.includes('api_key')) throw new ProviderError('provider_auth', 'AI provider credentials are not valid.', 502, false)
-    throw new ProviderError('provider_rejected', 'The AI provider rejected the request.', 502, false)
+    throw new ProviderError('provider_rejected', 'The AI provider rejected the request.', 502, false, await errDetail(res, model))
   }
-  if (res.status === 404) throw new ProviderError('provider_rejected', 'The AI model was not found. Check AI_MODEL.', 502, false)
+  if (res.status === 404) throw new ProviderError('provider_rejected', 'The AI model was not found. Check AI_MODEL.', 502, false, await errDetail(res, model))
   if (!res.ok) throw new ProviderError('provider_error', 'The AI provider returned an error.', 502)
 
   const data = (await res.json().catch(() => null)) as {
